@@ -1,0 +1,19 @@
+.navbar {
+  color: red;
+  background-color: black;
+  display: flex;
+}
+
+.navbar h2 {
+  margin-right: 10em;
+}
+
+.navbar a {
+  margin: 0 2em;
+  text-decoration: none;
+  color: white;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
