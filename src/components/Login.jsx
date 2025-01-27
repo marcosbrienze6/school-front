@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import api from "../hooks/apiService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -10,38 +11,28 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.access_token);
-        console.log("Login realizado com sucesso!");
-        navigate("/");
-      } else {
-        const error = await response.json();
-        setErrorMessage("Erro ao logar:", error.message);
-      }
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      localStorage.setItem("access_token", response.data.access_token);
+      console.log("Login realizado com sucesso!");
+
+      const userResponse = await api.get("/auth/my-profile");
+      navigate(`/user/${userResponse.data.user.id}`);
     } catch (err) {
-      setErrorMessage("Erro ao conectar com o servidor.");
+      setErrorMessage("Erro ao logar ou buscar os dados do usuário.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="email">E-mail ou CPF:</label>
+        <label htmlFor="email">E-mail:</label>
         <input
           type="text"
           id="email"
           name="email"
-          placeholder="Digite seu e-mail ou CPF"
+          placeholder="Digite seu e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
