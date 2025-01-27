@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -60,7 +61,7 @@ const Login = () => {
       </div>
       <button type="submit">Entrar</button>
       <div>
-        <a href="/forgot-password">Esqueceu a senha?</a>
+        <Link to="/forgot-password">Esqueceu a senha?</Link>
       </div>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
     </form>
