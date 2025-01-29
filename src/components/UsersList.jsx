@@ -7,6 +7,15 @@ const UsersList = () => {
     loading,
     error,
   } = useFetch("http://localhost:8000/api/user");
+  console.log(users);
+
+  const roles = {
+    1: "Administrador",
+    2: "Professor",
+    3: "Aluno",
+    4: "Responsável",
+    5: "Funcionário",
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -17,7 +26,8 @@ const UsersList = () => {
       <ul>
         {users.map((user) => (
           <li key={user.id}>
-            {user.name} - {user.email}
+            {user.name} - {user.email} -{" "}
+            {roles[user.user_role_id] || "Cargo não definido"}
           </li>
         ))}
       </ul>

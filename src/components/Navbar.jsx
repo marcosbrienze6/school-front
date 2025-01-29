@@ -13,6 +13,40 @@ const Navbar = () => {
           <h1>SMP - Online</h1>
 
           <Link to={"/user/:id"}>Meu perfil</Link>
+          <ul className={styles.menu}>
+            <li>
+              <a href="#">Gestão de Usuários</a>
+              <ul className={styles.submenu}>
+                <li>
+                  <Link to={"/student"}>Alunos</Link>
+                </li>
+                <li>
+                  <a href="#">Professores</a>
+                </li>
+                <li>
+                  <a href="#">Responsáveis</a>
+                </li>
+                <li>
+                  <a href="#">Funcionários</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul className={styles.menu}>
+            <li>
+              <a href="#">Diário</a>
+              <ul className={styles.submenu}>
+                <li>
+                  <a href="#">Disciplinas</a>
+                </li>
+                <li>
+                  <a href="#">Turmas</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <Link to={"/dashboard"}>Desempenho Geral</Link>
+          <Link to={"/calendar"}>Calendário</Link>
         </div>
       ) : (
         <div className={styles.navbar}>

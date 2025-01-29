@@ -17,3 +17,62 @@
 .navbar a:hover {
   text-decoration: underline;
 }
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #333;
+  display: inline-block;
+  position: relative;
+}
+
+.menu > li {
+  position: relative;
+  float: left;
+}
+
+.menu > li > a {
+  display: block;
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  background: #333;
+}
+
+.menu > li > a:hover {
+  background: #444;
+}
+
+/* Submenu escondido por padrão */
+.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #444;
+  width: 180px;
+}
+
+/* Exibe o submenu ao passar o mouse */
+.menu li:hover .submenu {
+  display: block;
+}
+
+.submenu li {
+  border-bottom: 1px solid #555;
+}
+
+.submenu li a {
+  display: block;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.submenu li a:hover {
+  background: #555;
+}

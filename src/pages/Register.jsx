@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import api from "../services/apiService";
 
 const Register = () => {
@@ -10,13 +9,15 @@ const Register = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [address, setAddress] = useState("");
   const [user_role_id, setUserRole] = useState("");
-
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Limpa mensagens de erro anteriores
+    setSuccessMessage("");
 
     try {
       const response = await api.post("/user/create", {
@@ -28,12 +29,19 @@ const Register = () => {
         password,
       });
       localStorage.setItem("access_token", response.data.access_token);
-      console.log("Conta criada com sucesso!");
+      setSuccessMessage("Conta criada com sucesso!");
 
-      const userResponse = await api.get("/auth/my-profile");
+      // Obtém o perfil do usuário criado
+      const userResponse = await api.get("/auth/my-profile", {
+        headers: { Authorization: `Bearer ${response.data.access_token}` },
+      });
+
+      // Redireciona para o perfil do usuário
       navigate(`/user/${userResponse.data.user.id}`);
     } catch (err) {
-      setErrorMessage("Erro ao logar ou buscar os dados do usuário.");
+      const message =
+        err.response?.data?.message || "Erro ao registrar o usuário.";
+      setErrorMessage(message);
     }
   };
 
@@ -56,7 +64,7 @@ const Register = () => {
         <div>
           <label htmlFor="email">E-mail:</label>
           <input
-            type="text"
+            type="email"
             id="email"
             name="email"
             placeholder="Digite seu e-mail"
@@ -91,15 +99,21 @@ const Register = () => {
         </div>
         <div>
           <label htmlFor="user_role_id">Cargo:</label>
-          <input
-            type="number"
+          <select
             id="user_role_id"
-            name="user_role_id"
-            placeholder="Digite seu cargo"
             value={user_role_id}
             onChange={(e) => setUserRole(e.target.value)}
             required
-          />
+          >
+            <option value="" disabled>
+              Selecione o Cargo
+            </option>
+            <option value="1">Administrador</option>
+            <option value="2">Professor</option>
+            <option value="3">Aluno</option>
+            <option value="4">Responsável</option>
+            <option value="5">Funcionário</option>
+          </select>
         </div>
         <div>
           <label htmlFor="password">Senha:</label>
@@ -113,10 +127,14 @@ const Register = () => {
             required
           />
         </div>
-        <button onClick={() => setPasswordVisible(!passwordVisible)}>
-          Mostrar senha
+        <button
+          type="button"
+          onClick={() => setPasswordVisible(!passwordVisible)}
+        >
+          {passwordVisible ? "Ocultar senha" : "Mostrar senha"}
         </button>
         <button type="submit">Registrar</button>
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       </form>
     </div>

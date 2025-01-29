@@ -6,12 +6,23 @@ import UsersList from "../components/UsersList";
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
 
+  const roles = {
+    1: "Administrador",
+    2: "Professor",
+    3: "Aluno",
+    4: "Responsável",
+    5: "Funcionário",
+  };
+
   return (
     <div>
       {isAuthenticated ? (
         <div>
           <Navbar />
-          <p>Olá, {user.name}!</p>
+          <p>
+            Olá, {user.name}! -{" "}
+            {roles[user.user_role_id] || "Cargo não definido"}
+          </p>
           <UsersList />
         </div>
       ) : (

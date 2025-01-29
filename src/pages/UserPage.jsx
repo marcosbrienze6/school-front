@@ -11,20 +11,38 @@ function UserPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get("/auth/my-profile");
+        setProfilePicture(response.data.profile_picture);
+      } catch (error) {
+        console.error("erro");
+      }
+    };
+    fetchUser();
+  }, []);
+
   const handleLogout = async () => {
     await logout();
     navigate("/");
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.value[0];
+    const file = e.target.files[0];
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    }
-    {
-      console.error("nenhum arquivo pai");
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -35,16 +53,11 @@ function UserPage() {
       formData.append("profile_picture", fileInput);
 
       try {
-        const response = await api.post(
-          "/auth/update-profile-picture",
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
+        const response = await api.post("/auth/my-profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
         setProfilePicture(response.data.profile_picture);
-        alert("Foto de perfil atualizada com sucesso!");
       } catch (error) {
         console.error("Erro ao atualizar a foto de perfil:", error);
         alert("Erro ao atualizar a foto de perfil.");
@@ -56,14 +69,24 @@ function UserPage() {
     return <p>Carregando...</p>;
   }
 
+  const roles = {
+    1: "Administrador",
+    2: "Professor",
+    3: "Aluno",
+    4: "Responsável",
+    5: "Funcionário",
+  };
+
   return (
     <div style={{ maxWidth: "600px", margin: "auto" }}>
       <h1>Bem-vindo, {user.name}!</h1>
       <p>Email: {user.email}</p>
+      <p>Seu cargo é : {roles[user.user_role_id] || "Cargo não definido"}</p>
+      <p>CPF : {user.cpf}</p>
       <p>Usuário criado em: {new Date(user.created_at).toLocaleDateString()}</p>
       {profilePicture ? (
         <img
-          src={`http://127.0.0.1:8000/storage/${profilePicture}`}
+          src={profilePicture}
           alt="Foto de perfil"
           style={{ width: "150px", height: "150px", borderRadius: "50%" }}
         />
