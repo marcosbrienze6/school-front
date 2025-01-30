@@ -6,12 +6,16 @@ import Login from "./pages/Login";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import UserPage from "./pages/UserPage";
+import UserRolePage from "./pages/UserRolePage";
 import Register from "./pages/Register";
+import UsersList from "./components/UsersList";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -19,6 +23,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/password-reset" element={<ResetPassword />} />
           <Route path="/user/:id" element={<UserPage />} />
+          <Route path="/all-users" element={<UsersList />} />
+          <Route path="/role/:roleId" element={<UserRolePage />} />
         </Routes>
       </Router>
     </AuthProvider>

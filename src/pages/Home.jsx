@@ -18,7 +18,6 @@ const Home = () => {
     <div>
       {isAuthenticated ? (
         <div>
-          <Navbar />
           <p>
             Olá, {user.name}! -{" "}
             {roles[user.user_role_id] || "Cargo não definido"}
@@ -27,7 +26,6 @@ const Home = () => {
         </div>
       ) : (
         <div>
-          <Navbar />
           <h1>tem nada p tu aqui nao, loga ai</h1>
         </div>
       )}

@@ -4,24 +4,28 @@ import { useAuth } from "../context/AuthContext";
 import api from "../services/apiService";
 
 function UserPage() {
-  const { user, logout } = useAuth();
-  const [profilePicture, setProfilePicture] = useState(
-    user?.profile_picture || null
-  );
+  const { user: loggedUser, logout } = useAuth(); // Usuário logado
+  const { userId } = useParams(); // Obtém o ID da URL
+  const [profileUser, setProfileUser] = useState(null); // Usuário do perfil
+  const [profilePicture, setProfilePicture] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get("/auth/my-profile");
+        const response = await api.get(`/auth/my-profile/${userId}`);
+        setProfileUser(response.data);
         setProfilePicture(response.data.profile_picture);
       } catch (error) {
-        console.error("erro");
+        console.error("Erro ao buscar usuário:", error);
       }
     };
-    fetchUser();
-  }, []);
+
+    if (userId) {
+      fetchUser();
+    }
+  }, [userId]);
 
   const handleLogout = async () => {
     await logout();
@@ -46,6 +50,11 @@ function UserPage() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
+    if (!loggedUser || loggedUser.id !== Number(userId)) {
+      alert("Você só pode alterar sua própria foto!");
+      return;
+    }
+
     const formData = new FormData();
     const fileInput = e.target.elements.profile_picture.files[0];
 
@@ -53,9 +62,13 @@ function UserPage() {
       formData.append("profile_picture", fileInput);
 
       try {
-        const response = await api.post("/auth/my-profile", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await api.post(
+          `/users/${userId}/profile-picture`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
 
         setProfilePicture(response.data.profile_picture);
       } catch (error) {
@@ -65,7 +78,7 @@ function UserPage() {
     }
   };
 
-  if (!user) {
+  if (!profileUser) {
     return <p>Carregando...</p>;
   }
 
@@ -79,11 +92,15 @@ function UserPage() {
 
   return (
     <div style={{ maxWidth: "600px", margin: "auto" }}>
-      <h1>Bem-vindo, {user.name}!</h1>
-      <p>Email: {user.email}</p>
-      <p>Seu cargo é : {roles[user.user_role_id] || "Cargo não definido"}</p>
-      <p>CPF : {user.cpf}</p>
-      <p>Usuário criado em: {new Date(user.created_at).toLocaleDateString()}</p>
+      <h1>Perfil de {profileUser.name}</h1>
+      <p>Email: {profileUser.email}</p>
+      <p>Cargo: {roles[profileUser.user_role_id] || "Cargo não definido"}</p>
+      <p>CPF: {profileUser.cpf}</p>
+      <p>
+        Usuário criado em:{" "}
+        {new Date(profileUser.created_at).toLocaleDateString()}
+      </p>
+
       {profilePicture ? (
         <img
           src={profilePicture}
@@ -94,29 +111,34 @@ function UserPage() {
         <p>Sem foto de perfil</p>
       )}
 
-      <form onSubmit={handleUpload}>
-        <input
-          type="file"
-          name="profile_picture"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        {imagePreview && (
-          <img
-            src={imagePreview}
-            alt="Preview da nova foto"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              marginTop: "10px",
-            }}
+      {loggedUser?.id === Number(userId) && (
+        <form onSubmit={handleUpload}>
+          <input
+            type="file"
+            name="profile_picture"
+            accept="image/*"
+            onChange={handleImageChange}
           />
-        )}
-        <button type="submit">Atualizar Foto</button>
-      </form>
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview da nova foto"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                marginTop: "10px",
+              }}
+            />
+          )}
+          <button type="submit">Atualizar Foto</button>
+        </form>
+      )}
+
       <Link to={"/"}>Home</Link>
-      <button onClick={handleLogout}>Sair</button>
+      {loggedUser?.id === Number(userId) && (
+        <button onClick={handleLogout}>Sair</button>
+      )}
     </div>
   );
 }

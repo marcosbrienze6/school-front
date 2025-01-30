@@ -1,6 +1,6 @@
 import React from "react";
 import useFetch from "../services/useFetch";
-
+import styles from "../styles/UserList.module.css";
 const UsersList = () => {
   const {
     data: users,
@@ -22,11 +22,11 @@ const UsersList = () => {
 
   return (
     <div>
-      <h1>Lista de Usuários</h1>
+      <h2>Lista de Usuários</h2>
       <ul>
         {users.map((user) => (
-          <li key={user.id}>
-            {user.name} - {user.email} -{" "}
+          <li className={styles.lines} key={user.id}>
+            {user.name} - {user.email} - CPF:{user.cpf} - Rua: {user.address} -{" "}
             {roles[user.user_role_id] || "Cargo não definido"}
           </li>
         ))}

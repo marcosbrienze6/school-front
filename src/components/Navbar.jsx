@@ -4,30 +4,39 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  const roles = {
+    1: "Administrador",
+    2: "Professores",
+    3: "Alunos",
+    4: "Responsáveis",
+    5: "Funcionários",
+  };
 
   return (
     <div>
       {isAuthenticated ? (
         <div className={styles.navbar}>
-          <h1>SMP - Online</h1>
-
+          <Link to={"/"}>
+            <h1>SMP - Online - {roles[user.user_role_id]}</h1>
+          </Link>
           <Link to={"/user/:id"}>Meu perfil</Link>
           <ul className={styles.menu}>
             <li>
               <a href="#">Gestão de Usuários</a>
               <ul className={styles.submenu}>
                 <li>
-                  <Link to={"/student"}>Alunos</Link>
+                  <Link to="/role/3">Alunos</Link>
                 </li>
                 <li>
-                  <a href="#">Professores</a>
+                  <Link to="/role/2">Professores</Link>
                 </li>
                 <li>
-                  <a href="#">Responsáveis</a>
+                  <Link to="/role/4">Responsáveis</Link>
                 </li>
                 <li>
-                  <a href="#">Funcionários</a>
+                  <Link to="/role/5">Funcionários</Link>
                 </li>
               </ul>
             </li>

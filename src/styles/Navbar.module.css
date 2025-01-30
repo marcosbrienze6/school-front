@@ -1,11 +1,12 @@
 .navbar {
-  color: red;
   background-color: black;
   display: flex;
 }
 
-.navbar h2 {
+.navbar h1 {
   margin-right: 10em;
+  color: red;
+  text-decoration: none;
 }
 
 .navbar a {

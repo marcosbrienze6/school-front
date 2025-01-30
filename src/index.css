@@ -16,6 +16,15 @@
   padding: 0;
 }
 
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 button {
   background-color: black;
   color: white;
