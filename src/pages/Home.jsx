@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/Navbar";
-import UsersList from "../components/UsersList";
+import DashboardCards from "../components/DashboardCards";
+import UserCard from "../components/UserCard";
 
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
@@ -14,6 +14,20 @@ const Home = () => {
     5: "Funcionário",
   };
 
+  const studentData = {
+    photo: "https://via.placeholder.com/120x150", // Substitua pela URL da foto do aluno
+    rm: "220377",
+    name: "MARCOS MIGUEL BRIENZE",
+    raSed: "107868964-7/SP",
+    habilitacoes: ["EDIFICAÇÕES MTEC PI", "OUTRA OPÇÃO"],
+    situacaoMatricula: "CONCLUÍDO",
+    turma: "TURMA A",
+    semestreOC: "2022",
+    anoOC: "2022",
+    serie: "3ª SÉRIE",
+    grupoDivisao: "GRUPO B",
+  };
+
   return (
     <div>
       {isAuthenticated ? (
@@ -22,7 +36,10 @@ const Home = () => {
             Olá, {user.name}! -{" "}
             {roles[user.user_role_id] || "Cargo não definido"}
           </p>
-          <UsersList />
+          <div className="home-container">
+            <UserCard user={studentData} />
+            <DashboardCards />
+          </div>
         </div>
       ) : (
         <div>
