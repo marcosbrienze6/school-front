@@ -4,9 +4,9 @@ import { useAuth } from "../context/AuthContext";
 import api from "../services/apiService";
 
 function UserPage() {
-  const { user: loggedUser, logout } = useAuth(); // Usuário logado
-  const { userId } = useParams(); // Obtém o ID da URL
-  const [profileUser, setProfileUser] = useState(null); // Usuário do perfil
+  const { user: loggedUser, logout } = useAuth();
+  const { userId } = useParams();
+  const [profileUser, setProfileUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ function UserPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get(`/auth/my-profile/${userId}`);
+        const response = await api.get("/auth/my-profile");
         setProfileUser(response.data);
         setProfilePicture(response.data.profile_picture);
       } catch (error) {
@@ -22,10 +22,8 @@ function UserPage() {
       }
     };
 
-    if (userId) {
-      fetchUser();
-    }
-  }, [userId]);
+    fetchUser();
+  }, [loggedUser, userId]);
 
   const handleLogout = async () => {
     await logout();
@@ -35,16 +33,13 @@ function UserPage() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
   useEffect(() => {
     return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
     };
   }, [imagePreview]);
 
@@ -55,32 +50,25 @@ function UserPage() {
       return;
     }
 
-    const formData = new FormData();
     const fileInput = e.target.elements.profile_picture.files[0];
+    if (!fileInput) return;
 
-    if (fileInput) {
-      formData.append("profile_picture", fileInput);
+    const formData = new FormData();
+    formData.append("profile_picture", fileInput);
 
-      try {
-        const response = await api.post(
-          `/users/${userId}/profile-picture`,
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
+    try {
+      const response = await api.post("/auth/my-profile", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-        setProfilePicture(response.data.profile_picture);
-      } catch (error) {
-        console.error("Erro ao atualizar a foto de perfil:", error);
-        alert("Erro ao atualizar a foto de perfil.");
-      }
+      setProfilePicture(response.data.profile_picture);
+    } catch (error) {
+      console.error("Erro ao atualizar a foto de perfil:", error);
+      alert("Erro ao atualizar a foto de perfil.");
     }
   };
 
-  if (!profileUser) {
-    return <p>Carregando...</p>;
-  }
+  if (!profileUser) return <p>Carregando...</p>;
 
   const roles = {
     1: "Administrador",
@@ -92,13 +80,15 @@ function UserPage() {
 
   return (
     <div style={{ maxWidth: "600px", margin: "auto" }}>
-      <h1>Perfil de {profileUser.name}</h1>
-      <p>Email: {profileUser.email}</p>
-      <p>Cargo: {roles[profileUser.user_role_id] || "Cargo não definido"}</p>
-      <p>CPF: {profileUser.cpf}</p>
+      <h1>Perfil de {profileUser.user.name}</h1>
+      <p>Email: {profileUser.user.email}</p>
+      <p>
+        Cargo: {roles[profileUser.user.user_role_id] || "Cargo não definido"}
+      </p>
+      <p>CPF: {profileUser.user.cpf}</p>
       <p>
         Usuário criado em:{" "}
-        {new Date(profileUser.created_at).toLocaleDateString()}
+        {new Date(profileUser.user.created_at).toLocaleDateString()}
       </p>
 
       {profilePicture ? (

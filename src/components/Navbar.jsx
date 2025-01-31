@@ -21,7 +21,8 @@ const Navbar = () => {
           <Link to={"/"}>
             <h1>SMP - Online - {roles[user.user_role_id]}</h1>
           </Link>
-          <Link to={"/user/:id"}>Meu perfil</Link>
+          <Link to={`/user/${user.id}`}>Meu perfil</Link>
+
           <ul className={styles.menu}>
             <li>
               <a href="#">Gestão de Usuários</a>

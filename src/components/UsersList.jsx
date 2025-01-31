@@ -7,7 +7,6 @@ const UsersList = () => {
     loading,
     error,
   } = useFetch("http://localhost:8000/api/user");
-  console.log(users);
 
   const roles = {
     1: "Administrador",
