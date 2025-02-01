@@ -3,17 +3,16 @@ import { useAuth } from "../context/AuthContext";
 import DashboardCards from "../components/DashboardCards";
 import UserCard from "../components/UserCard";
 import styles from "../styles/Home.module.css";
+import {
+  FaUser,
+  FaCalendarAlt,
+  FaFileInvoice,
+  FaHome,
+  FaQuestionCircle,
+} from "react-icons/fa";
 
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
-
-  const roles = {
-    1: "Administrador",
-    2: "Professor",
-    3: "Aluno",
-    4: "Responsável",
-    5: "Funcionário",
-  };
 
   const hasRole = (roleId) => user?.user_role_id === roleId;
 
@@ -25,13 +24,13 @@ const Home = () => {
     { title: "Desempenho Geral", link: "/overall-performance" },
   ];
 
-  const professorCards = [
-    { title: "Diário", link: "/turmas" },
+  const teacherCards = [
+    { title: "Diário", link: "/class" },
     { title: "Calendário", link: "/calendar" },
   ];
 
-  const alunoCards = [
-    { title: "Diário", link: "/turmas" },
+  const studentCards = [
+    { title: "Diário", link: "/class" },
     { title: "Calendário", link: "/calendar" },
   ];
 
@@ -41,15 +40,11 @@ const Home = () => {
     <div>
       {isAuthenticated ? (
         <div>
-          <p>
-            Olá, {hasRole(1) ? "Mestre" : ""} {user.name}! -{" "}
-            {roles[user.user_role_id] || "Cargo não definido"}
-          </p>
           <div className={styles.home_container}>
             <UserCard />
             {hasRole(1) && <DashboardCards cards={adminCards} />}
-            {hasRole(2) && <DashboardCards cards={professorCards} />}
-            {hasRole(3) && <DashboardCards cards={alunoCards} />}
+            {hasRole(2) && <DashboardCards cards={teacherCards} />}
+            {hasRole(3) && <DashboardCards cards={studentCards} />}
             {hasRole(4) && <DashboardCards cards={responsavelCards} />}
           </div>
         </div>

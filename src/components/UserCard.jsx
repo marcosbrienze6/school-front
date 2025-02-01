@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/apiService";
+import styles from "../styles/UserCard.module.css";
 
 function UserCard() {
   const { user: loggedUser } = useAuth();
@@ -25,22 +26,23 @@ function UserCard() {
 
   if (!profileUser) return <p>Carregando...</p>;
 
+  const roles = {
+    1: "Administrador",
+    2: "Professor",
+    3: "Aluno",
+    4: "Responsável",
+    5: "Funcionário",
+  };
+
   return (
-    <div style={{ maxWidth: "300px", margin: "auto", textAlign: "center" }}>
+    <div className={styles.user_card_container}>
       <img
         src={profilePicture}
         alt="Foto de perfil"
-        style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+        style={{ width: "200px", height: "200px", borderRadius: "50%" }}
       />
-      <p>
-        <strong>Nome:</strong> {profileUser.user.name}
-      </p>
-      <p>
-        <strong>Email:</strong> {profileUser.user.email}
-      </p>
-      <p>
-        <strong>CPF:</strong> {profileUser.user.cpf}
-      </p>
+      <h2>{profileUser.user.name}</h2>
+      <p>{roles[profileUser.user.user_role_id] || "Cargo não definido"}</p>
     </div>
   );
 }
