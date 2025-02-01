@@ -16,6 +16,7 @@ const Login = () => {
     try {
       const response = await api.post("/auth/login", { email, password });
       localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("user_role_id", response.data.user.user_role_id);
       console.log("Login realizado com sucesso!");
 
       const userResponse = await api.get("/auth/my-profile");

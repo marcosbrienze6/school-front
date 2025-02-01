@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 import DashboardCards from "../components/DashboardCards";
 import UserCard from "../components/UserCard";
+import styles from "../styles/Home.module.css";
 
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
@@ -14,36 +15,47 @@ const Home = () => {
     5: "Funcionário",
   };
 
-  const studentData = {
-    photo: "https://via.placeholder.com/120x150", // Substitua pela URL da foto do aluno
-    rm: "220377",
-    name: "MARCOS MIGUEL BRIENZE",
-    raSed: "107868964-7/SP",
-    habilitacoes: ["EDIFICAÇÕES MTEC PI", "OUTRA OPÇÃO"],
-    situacaoMatricula: "CONCLUÍDO",
-    turma: "TURMA A",
-    semestreOC: "2022",
-    anoOC: "2022",
-    serie: "3ª SÉRIE",
-    grupoDivisao: "GRUPO B",
-  };
+  const hasRole = (roleId) => user?.user_role_id === roleId;
+
+  const adminCards = [
+    { title: "Professores", link: "/role/2" },
+    { title: "Alunos", link: "/role/3" },
+    { title: "Responsáveis", link: "/role/4" },
+    { title: "Funcionários", link: "/role/5" },
+    { title: "Desempenho Geral", link: "/overall-performance" },
+  ];
+
+  const professorCards = [
+    { title: "Diário", link: "/turmas" },
+    { title: "Calendário", link: "/calendar" },
+  ];
+
+  const alunoCards = [
+    { title: "Diário", link: "/turmas" },
+    { title: "Calendário", link: "/calendar" },
+  ];
+
+  const responsavelCards = [{ title: "Calendário", link: "/calendar" }];
 
   return (
     <div>
       {isAuthenticated ? (
         <div>
           <p>
-            Olá, {user.name}! -{" "}
+            Olá, {hasRole(1) ? "Mestre" : ""} {user.name}! -{" "}
             {roles[user.user_role_id] || "Cargo não definido"}
           </p>
-          <div className="home-container">
-            <UserCard user={studentData} />
-            <DashboardCards />
+          <div className={styles.home_container}>
+            <UserCard />
+            {hasRole(1) && <DashboardCards cards={adminCards} />}
+            {hasRole(2) && <DashboardCards cards={professorCards} />}
+            {hasRole(3) && <DashboardCards cards={alunoCards} />}
+            {hasRole(4) && <DashboardCards cards={responsavelCards} />}
           </div>
         </div>
       ) : (
         <div>
-          <h1>tem nada p tu aqui nao, loga ai</h1>
+          <h1>Tem nada pra tu aqui não, loga aí</h1>
         </div>
       )}
     </div>

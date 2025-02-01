@@ -25,13 +25,6 @@ a:hover {
   text-decoration: underline;
 }
 
-.home-container {
-  display: flex;
-  gap: 20px; /* Espaçamento entre os cards */
-  max-height: 500px;
-  align-items: stretch; /* Faz os dois ficarem na mesma altura */
-}
-
 button {
   background-color: black;
   color: white;

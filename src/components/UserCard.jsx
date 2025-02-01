@@ -1,59 +1,48 @@
-import React from "react";
-import styles from "../styles/UserCard.module.css";
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import api from "../services/apiService";
 
-const UserCard = ({ user }) => {
+function UserCard() {
+  const { user: loggedUser } = useAuth();
+  const [profileUser, setProfileUser] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get("/auth/my-profile");
+        setProfileUser(response.data);
+        setProfilePicture(
+          response.data.profile_picture || "/default-profile.png"
+        );
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+
+    fetchUser();
+  }, [loggedUser]);
+
+  if (!profileUser) return <p>Carregando...</p>;
+
   return (
-    <div className={styles.student_card}>
-      <h3 className={styles.title}>Identificação do Aluno</h3>
-      <div className={styles.photo_container}>
-        <img
-          src={user.photo}
-          alt="Foto do Aluno"
-          className={styles.student_photo}
-        />
-        <button className={styles.photo_button}>ALTERAR FOTO</button>
-      </div>
+    <div style={{ maxWidth: "300px", margin: "auto", textAlign: "center" }}>
+      <img
+        src={profilePicture}
+        alt="Foto de perfil"
+        style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+      />
       <p>
-        <strong>RM:</strong> {user.rm}
+        <strong>Nome:</strong> {profileUser.user.name}
       </p>
       <p>
-        <strong>Nome:</strong> {user.name}
+        <strong>Email:</strong> {profileUser.user.email}
       </p>
       <p>
-        <strong>RA SED:</strong> {user.raSed}
-      </p>
-
-      <label>
-        <strong>Habilitação:</strong>
-      </label>
-      <select className={styles.select_box}>
-        {user.habilitacoes.map((hab, index) => (
-          <option key={index} value={hab}>
-            {hab}
-          </option>
-        ))}
-      </select>
-
-      <p>
-        <strong>Sit. Matrícula:</strong> {user.situacaoMatricula}
-      </p>
-      <p>
-        <strong>Turma:</strong> {user.turma}
-      </p>
-      <p>
-        <strong>Semestre OC:</strong> {user.semestreOC}
-      </p>
-      <p>
-        <strong>Ano OC:</strong> {user.anoOC}
-      </p>
-      <p>
-        <strong>Módulo/Série:</strong> {user.serie}
-      </p>
-      <p>
-        <strong>Grupo da Divisão:</strong> {user.grupoDivisao}
+        <strong>CPF:</strong> {profileUser.user.cpf}
       </p>
     </div>
   );
-};
+}
 
 export default UserCard;

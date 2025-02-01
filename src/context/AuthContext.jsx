@@ -16,10 +16,7 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data.user);
           setIsAuthenticated(true);
         })
-        .catch(() => {
-          localStorage.removeItem("access_token");
-          setIsAuthenticated(false);
-        });
+        .catch(() => handleLogout());
     }
   }, []);
 
@@ -29,15 +26,16 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     try {
       await api.post("/auth/logout");
     } catch (error) {
       console.error("Erro ao realizar logout:", error);
+    } finally {
+      localStorage.removeItem("access_token");
+      setUser(null);
+      setIsAuthenticated(false);
     }
-    localStorage.removeItem("access_token");
-    setUser(null);
-    setIsAuthenticated(false);
   };
 
   return (
@@ -46,7 +44,8 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         user,
         login,
-        logout,
+        logout: handleLogout,
+        hasRole: (role) => user?.role === role,
       }}
     >
       {children}

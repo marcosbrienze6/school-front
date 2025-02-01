@@ -6,10 +6,17 @@ import api from "../services/apiService";
 function UserPage() {
   const { user: loggedUser, logout } = useAuth();
   const { userId } = useParams();
+  const navigate = useNavigate();
+
   const [profileUser, setProfileUser] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const navigate = useNavigate();
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    cpf: "",
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -17,6 +24,11 @@ function UserPage() {
         const response = await api.get("/auth/my-profile");
         setProfileUser(response.data);
         setProfilePicture(response.data.profile_picture);
+        setFormData({
+          name: response.data.user.name,
+          email: response.data.user.email,
+          cpf: response.data.user.cpf,
+        });
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
       }
@@ -28,6 +40,28 @@ function UserPage() {
   const handleLogout = async () => {
     await logout();
     navigate("/");
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditToggle = () => {
+    setEditing(!editing);
+  };
+
+  const handleSave = async () => {
+    try {
+      await api.put("/auth/{id}", formData);
+      setEditing(false);
+      setProfileUser({
+        ...profileUser,
+        user: { ...profileUser.user, ...formData },
+      });
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+      alert("Erro ao salvar as alterações.");
+    }
   };
 
   const handleImageChange = (e) => {
@@ -80,17 +114,6 @@ function UserPage() {
 
   return (
     <div style={{ maxWidth: "600px", margin: "auto" }}>
-      <h1>Perfil de {profileUser.user.name}</h1>
-      <p>Email: {profileUser.user.email}</p>
-      <p>
-        Cargo: {roles[profileUser.user.user_role_id] || "Cargo não definido"}
-      </p>
-      <p>CPF: {profileUser.user.cpf}</p>
-      <p>
-        Usuário criado em:{" "}
-        {new Date(profileUser.user.created_at).toLocaleDateString()}
-      </p>
-
       {profilePicture ? (
         <img
           src={profilePicture}
@@ -125,10 +148,67 @@ function UserPage() {
         </form>
       )}
 
-      <Link to={"/"}>Home</Link>
+      <p>
+        Name:
+        {editing ? (
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+          />
+        ) : (
+          profileUser.user.name
+        )}
+      </p>
+
+      <p>
+        Email:{" "}
+        {editing ? (
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        ) : (
+          profileUser.user.email
+        )}
+      </p>
+
+      <p>
+        Cargo: {roles[profileUser.user.user_role_id] || "Cargo não definido"}
+      </p>
+
+      <p>
+        CPF:{" "}
+        {editing ? (
+          <input
+            type="text"
+            name="cpf"
+            value={formData.cpf}
+            onChange={handleInputChange}
+          />
+        ) : (
+          profileUser.user.cpf
+        )}
+      </p>
+
+      <p>
+        Usuário criado em:{" "}
+        {new Date(profileUser.user.created_at).toLocaleDateString()}
+      </p>
+
       {loggedUser?.id === Number(userId) && (
-        <button onClick={handleLogout}>Sair</button>
+        <div>
+          <button onClick={editing ? handleSave : handleEditToggle}>
+            {editing ? "Salvar" : "Editar"}
+          </button>
+          <button onClick={handleLogout}>Sair</button>
+        </div>
       )}
+
+      <Link to="/">Home</Link>
     </div>
   );
 }
