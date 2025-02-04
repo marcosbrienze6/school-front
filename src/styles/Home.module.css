@@ -1,6 +1,7 @@
 .home_wrapper {
   display: flex;
   align-items: flex-start;
+  background-color: rgb(172, 172, 172);
   padding: 2em;
 }
 

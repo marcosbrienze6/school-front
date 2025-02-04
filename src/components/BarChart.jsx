@@ -1,18 +1,8 @@
 import { ResponsiveLine } from "@nivo/line";
 
-const data = [
-  {
-    id: "vendas",
-    data: [
-      { x: "Brasil", y: 120 },
-      { x: "EUA", y: 200 },
-      { x: "Canadá", y: 80 },
-    ],
-  },
-];
-
-const MyResponsiveLine = () => (
-  <div style={{ height: "400px", width: "600px" }}>
+const MyResponsiveLine = ({ data, title }) => (
+  <div style={{ height: "700px", width: "900px" }}>
+    <h3 style={{ textAlign: "center", marginBottom: "10px" }}>{title}</h3>
     <ResponsiveLine
       data={data}
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -74,7 +64,7 @@ const MyResponsiveLine = () => (
             {
               on: "hover",
               style: {
-                itemBackground: "rgba(0, 0, 0, .03)",
+                itemBackground: "rgba(173, 170, 170, 0.03)",
                 itemOpacity: 1,
               },
             },

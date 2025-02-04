@@ -25,6 +25,7 @@ const UserRolePage = () => {
   const filteredUsers = users.filter(
     (user) => user.user_role_id === Number(roleId)
   );
+  console.log(filteredUsers);
 
   return (
     <div>
