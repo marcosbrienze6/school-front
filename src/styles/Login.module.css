@@ -1,0 +1,64 @@
+.login_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Faz a div ocupar toda a altura da tela */
+  background-color: #f4f4f4; /* Cor de fundo suave */
+}
+
+.form_container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaçamento entre os elementos */
+  padding: 30px;
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px; /* Limita o tamanho do formulário */
+}
+
+.form_container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #afaeae;
+  border-radius: 5px;
+}
+
+.form_container button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form_container a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.form_container a:hover {
+  text-decoration: underline;
+}
+
+/* BOTAO DE SENHA DENTRO DO INPUT */
+.input_container button {
+  width: 40px;
+  background-color: transparent;
+  text-align: center;
+}
+
+.toggle_password {
+  position: absolute;
+  width: 10px;
+  background-color: transparent;
+  top: 51.5%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  left: 57.5%;
+}

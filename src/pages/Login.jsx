@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import api from "../services/apiService";
+import styles from "../styles/Login.module.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState();
   const navigate = useNavigate();
 
@@ -27,8 +29,9 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className={styles.login_container}>
+      <form className={styles.form_container} onSubmit={handleSubmit}>
+        <h2>SMP - Online</h2>
         <div>
           <label htmlFor="email">E-mail:</label>
           <input
@@ -41,8 +44,7 @@ const Login = () => {
             required
           />
         </div>
-        <div>
-          <label htmlFor="password">Senha:</label>
+        <div className={styles.input_container}>
           <input
             type={passwordVisible ? "text" : "password"}
             id="password"
@@ -52,10 +54,14 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <button
+            type="button"
+            onClick={() => setPasswordVisible(!passwordVisible)}
+            className={styles.toggle_password}
+          >
+            {passwordVisible ? "👁️" : "🔒"}
+          </button>
         </div>
-        <button onClick={() => setPasswordVisible(!passwordVisible)}>
-          Mostrar senha
-        </button>
         <div>
           <Link to="/forgot-password">Esqueceu a senha?</Link>
         </div>

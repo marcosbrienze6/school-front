@@ -6,12 +6,14 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [cpf, setCpf] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [address, setAddress] = useState("");
-  const [user_role_id, setUserRole] = useState("");
-  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [role, setRole] = useState("student"); // 'student' ou 'teacher'
+  const [gradeModule, setGradeModule] = useState("module_1"); // Apenas para estudantes
+  const [department, setDepartment] = useState(""); // Apenas para professores
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,9 +26,12 @@ const Register = () => {
         name,
         cpf,
         address,
-        user_role_id,
         email,
         password,
+        role,
+        ...(role === "student" ||
+          (role === "teacher" && { grade_module: gradeModule })),
+        ...(role === "teacher" && { department }),
       });
       localStorage.setItem("access_token", response.data.access_token);
       setSuccessMessage("Conta criada com sucesso!");

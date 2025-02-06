@@ -4,8 +4,8 @@ import DashboardCards from "../components/DashboardCards";
 import UserCard from "../components/UserCard";
 import styles from "../styles/Home.module.css";
 
-import MyResponsiveLine from "../components/BarChart";
-import { fetchStudentData } from "../services/fetchStudentData";
+// import MyResponsiveLine from "../components/BarChart";
+// import { fetchStudentData } from "../services/fetchStudentData";
 
 const Home = () => {
   const { isAuthenticated, user } = useAuth();
@@ -33,21 +33,6 @@ const Home = () => {
     { title: "Calendário", link: "/calendar" },
   ];
 
-  useEffect(() => {
-    fetchStudentData(studentId, chartData).then((response) => {
-      const formattedData = [
-        {
-          id: chartData === "grades" ? "Notas Médias" : "Presença (%)",
-          data: response.map((item) => ({
-            x: chartData === "grades" ? item.course.name : item.date,
-            y: chartData === "grades" ? item.grade : item.present ? 100 : 0,
-          })),
-        },
-      ];
-      setData(formattedData);
-    });
-  }, [chartData]);
-
   return (
     <div className={styles.home_wrapper}>
       {isAuthenticated ? (
@@ -71,14 +56,14 @@ const Home = () => {
               >
                 {chartData === "grades" ? "Ver presença" : "Ver média de notas"}
               </button>
-              <MyResponsiveLine
+              {/* <MyResponsiveLine
                 data={data}
                 title={
                   chartData === "grades"
                     ? "Notas média das notas"
                     : "Presença (%)"
                 }
-              />
+              /> */}
             </div>
           </div>
         </>
