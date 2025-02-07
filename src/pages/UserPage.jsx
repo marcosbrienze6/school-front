@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/apiService";
+import styles from "../styles/UserPage.module.css";
 
 function UserPage() {
   const { user: loggedUser, logout } = useAuth();
@@ -113,104 +114,97 @@ function UserPage() {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto" }}>
-      {profilePicture ? (
-        <img
-          src={profilePicture}
-          alt="Foto de perfil"
-          style={{ width: "150px", height: "150px", borderRadius: "50%" }}
-        />
-      ) : (
-        <p>Sem foto de perfil</p>
-      )}
-
-      {loggedUser?.id === Number(userId) && (
-        <form onSubmit={handleUpload}>
-          <input
-            type="file"
-            name="profile_picture"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-          {imagePreview && (
+    <div className={styles.profile_header}>
+      <div className={styles.profile_info}>
+        <div className={styles.profile_picture}>
+          {profilePicture ? (
             <img
-              src={imagePreview}
-              alt="Preview da nova foto"
-              style={{
-                width: "100px",
-                height: "100px",
-                borderRadius: "50%",
-                marginTop: "10px",
-              }}
+              src={profilePicture}
+              alt="Foto de perfil"
+              style={{ width: "150px", height: "150px", borderRadius: "50%" }}
             />
+          ) : (
+            <p>Sem foto de perfil</p>
           )}
-          <button type="submit">Atualizar Foto</button>
-        </form>
-      )}
 
-      <p>
-        Name:
-        {editing ? (
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        ) : (
-          profileUser.user.name
-        )}
-      </p>
-
-      <p>
-        Email:{" "}
-        {editing ? (
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-        ) : (
-          profileUser.user.email
-        )}
-      </p>
-
-      <p>
-        Cargo: {roles[profileUser.user.user_role_id] || "Cargo não definido"}
-      </p>
-
-      <p>
-        CPF:{" "}
-        {editing ? (
-          <input
-            type="text"
-            name="cpf"
-            value={formData.cpf}
-            onChange={handleInputChange}
-          />
-        ) : (
-          profileUser.user.cpf
-        )}
-      </p>
-
-      <p>
-        Usuário criado em:{" "}
-        {new Date(profileUser.user.created_at).toLocaleDateString()}
-      </p>
-
-      {loggedUser?.id === Number(userId) && (
-        <div>
-          <button onClick={editing ? handleSave : handleEditToggle}>
-            {editing ? "Salvar" : "Editar"}
-          </button>
-          <button onClick={handleLogout}>Sair</button>
+          {loggedUser?.id === Number(userId) && (
+            <form onSubmit={handleUpload}>
+              <input
+                type="file"
+                name="profile_picture"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Preview da nova foto"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "50%",
+                    marginTop: "10px",
+                  }}
+                />
+              )}
+              <button type="submit">Atualizar Foto</button>
+            </form>
+          )}
+          <div className={styles.profile_icon}>
+            <div className={styles.profile_eyes}></div>
+            <div className={styles.profile_eyes}></div>
+          </div>
         </div>
-      )}
-
-      <Link to="/">Home</Link>
+        <div>
+          <h2 className={styles.profile_name}>{formData.name}</h2>
+          <button className={styles.edit_button}>Edit Profile</button>
+          <p className={styles.profile_xp}>CNA Expansion | 1.630xp</p>
+          <p className={styles.profile_level}>CNA Expansion 1</p>
+        </div>
+      </div>
+      <div className={styles.profile_actions}>
+        <button className={styles.settings_button}>⚙️</button>
+      </div>
     </div>
   );
 }
 
 export default UserPage;
+
+// {
+//   profilePicture ? (
+//     <img
+//       src={profilePicture}
+//       alt="Foto de perfil"
+//       style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+//     />
+//   ) : (
+//     <p>Sem foto de perfil</p>
+//   );
+// }
+
+// {
+//   loggedUser?.id === Number(userId) && (
+//     <form onSubmit={handleUpload}>
+//       <input
+//         type="file"
+//         name="profile_picture"
+//         accept="image/*"
+//         onChange={handleImageChange}
+//       />
+//       {imagePreview && (
+//         <img
+//           src={imagePreview}
+//           alt="Preview da nova foto"
+//           style={{
+//             width: "100px",
+//             height: "100px",
+//             borderRadius: "50%",
+//             marginTop: "10px",
+//           }}
+//         />
+//       )}
+//       <button type="submit">Atualizar Foto</button>
+//     </form>
+//   );
+// }
