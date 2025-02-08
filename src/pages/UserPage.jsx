@@ -7,6 +7,7 @@ import styles from "../styles/UserPage.module.css";
 function UserPage() {
   const { user: loggedUser, logout } = useAuth();
   const { userId } = useParams();
+  const [showFileInput, setShowFileInput] = useState(false);
   const navigate = useNavigate();
 
   const [profileUser, setProfileUser] = useState(null);
@@ -17,6 +18,8 @@ function UserPage() {
     name: "",
     email: "",
     cpf: "",
+    role: "",
+    student_data: null,
   });
 
   useEffect(() => {
@@ -29,6 +32,7 @@ function UserPage() {
           name: response.data.user.name,
           email: response.data.user.email,
           cpf: response.data.user.cpf,
+          id: response.data.user.id,
         });
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
@@ -43,31 +47,10 @@ function UserPage() {
     navigate("/");
   };
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleEditToggle = () => {
-    setEditing(!editing);
-  };
-
-  const handleSave = async () => {
-    try {
-      await api.put("/auth/{id}", formData);
-      setEditing(false);
-      setProfileUser({
-        ...profileUser,
-        user: { ...profileUser.user, ...formData },
-      });
-    } catch (error) {
-      console.error("Erro ao salvar perfil:", error);
-      alert("Erro ao salvar as alterações.");
-    }
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setProfilePicture(file);
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -105,66 +88,75 @@ function UserPage() {
 
   if (!profileUser) return <p>Carregando...</p>;
 
-  const roles = {
-    1: "Administrador",
-    2: "Professor",
-    3: "Aluno",
-    4: "Responsável",
-    5: "Funcionário",
-  };
-
   return (
-    <div className={styles.profile_header}>
-      <div className={styles.profile_info}>
-        <div className={styles.profile_picture}>
-          {profilePicture ? (
-            <img
-              src={profilePicture}
-              alt="Foto de perfil"
-              style={{ width: "150px", height: "150px", borderRadius: "50%" }}
-            />
-          ) : (
-            <p>Sem foto de perfil</p>
-          )}
-
-          {loggedUser?.id === Number(userId) && (
-            <form onSubmit={handleUpload}>
-              <input
-                type="file"
-                name="profile_picture"
-                accept="image/*"
-                onChange={handleImageChange}
+    <div>
+      <div className={styles.profile_header}>
+        <div className={styles.profile_info}>
+          <div
+            className={styles.profile_picture}
+            onClick={() => setShowFileInput(true)}
+          >
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Preview da nova foto"
+                style={{ width: "150px", height: "150px", borderRadius: "50%" }}
               />
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview da nova foto"
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    borderRadius: "50%",
-                    marginTop: "10px",
-                  }}
+            ) : profilePicture ? (
+              <img
+                src={profilePicture}
+                alt="Foto de perfil"
+                style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+              />
+            ) : (
+              <p>Sem foto de perfil</p>
+            )}
+
+            {showFileInput && (
+              <form onSubmit={handleUpload}>
+                <input
+                  type="file"
+                  name="profile_picture"
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
-              )}
-              <button type="submit">Atualizar Foto</button>
-            </form>
-          )}
-          <div className={styles.profile_icon}>
-            <div className={styles.profile_eyes}></div>
-            <div className={styles.profile_eyes}></div>
+                <button type="submit">Atualizar Foto</button>
+              </form>
+            )}
+          </div>
+          <div>
+            <h2 className={styles.profile_name}>{formData.name}</h2>
+            <button className={styles.edit_button}>Edit Profile</button>
+            <button onClick={handleLogout}>Sair</button>
+            <p className={styles.profile_xp}>CNA Expansion | 1.630xp</p>
+            <p className={styles.profile_level}>CNA Expansion 1</p>
           </div>
         </div>
-        <div>
-          <h2 className={styles.profile_name}>{formData.name}</h2>
-          <button className={styles.edit_button}>Edit Profile</button>
-          <p className={styles.profile_xp}>CNA Expansion | 1.630xp</p>
-          <p className={styles.profile_level}>CNA Expansion 1</p>
+        <div className={styles.profile_actions}>
+          <button className={styles.settings_button}>⚙️</button>
         </div>
       </div>
-      <div className={styles.profile_actions}>
-        <button className={styles.settings_button}>⚙️</button>
-      </div>
+      {formData.role === "student" && formData.student_data ? (
+        <div className={styles.info_card}>
+          <p>
+            <strong>Situação Matrícula:</strong> CURSANDO
+          </p>
+          <p>
+            <strong>Módulo/Série:</strong> {formData.student_data.grade_module}
+          </p>
+          <p>
+            <strong>CPF:</strong> {formData.cpf}
+          </p>
+          <p>
+            <strong>Horário:</strong> 07:15 às 15:10
+          </p>
+          <p>
+            <strong>Período:</strong> 2025 até 2027
+          </p>
+        </div>
+      ) : (
+        <p>Você é admin</p>
+      )}
     </div>
   );
 }

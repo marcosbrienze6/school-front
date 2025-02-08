@@ -35,7 +35,7 @@
 }
 
 .profile_picture input {
-  display: none;
+  display: block;
 }
 
 .profile_upload_button {
